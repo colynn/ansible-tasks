@@ -1,0 +1,9 @@
+---
+- gather_facts: false
+
+  hosts: all
+  sudo: yes
+  tasks:
+    - name: aliyun aegis check
+      script: files/check_aegis.sh
+      ignore_errors: yes
