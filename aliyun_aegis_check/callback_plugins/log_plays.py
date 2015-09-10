@@ -8,7 +8,7 @@
 # that want it.
 
 TIME_FORMAT="%b %d %Y %H:%M:%S"
-MSG_FORMAT="%(host)s \t- %(data)s\n"
+MSG_FORMAT="%(host)s \t %(data)s\n"
 
 def log(host, category, data):
 
@@ -23,11 +23,18 @@ def log(host, category, data):
         if ('stdout' in data.keys()):
 	    stdout=data['stdout']
     fd = open(path, "a")
-    if (data['rc'] == 1 ) and ( stdout == ''):
-	stdout = "no clean" 
-    fd.write(MSG_FORMAT % dict(host=host, data=stdout))
+    if ( stdout == 'no clean'):
+	fd.write(MSG_FORMAT % dict(host=host, data=stdout))
+    else:
+        for line in stdout.split('\n'):
+	   if line == '':
+	     continue
+	   line=line.split('"')[1].split()[1]
+	   #print line.split('"')
+	   fd.write(MSG_FORMAT % dict(host=host, data=line))
     fd.write('\n')
     fd.close()
+
 
 class CallbackModule(object):
     """
