@@ -1,5 +1,5 @@
 ## ansible-tasks
-* task1 use log callback_plugins
+* task1: use log callback_plugins
 
 ## upgrade ansible
 * Install virtualenv
