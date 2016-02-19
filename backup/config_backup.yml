@@ -1,0 +1,56 @@
+---
+
+- name: Download Backup Scripts from Git
+  git:
+    repo=https://example-user:{{ git_ansible_pass }}@gitlab.service.example.com/backup/ncbackup.git
+    dest=/opt/ncscripts/backup
+    force=yes
+    accept_hostkey=yes
+
+- name: Set permission for Backup Scripts
+  file:
+    dest=/opt/ncscripts/backup
+    owner=ncbackup
+    group=ncbackup
+    recurse=yes
+    state=directory
+
+- name: Ensure backup configuration
+  copy:
+    src=files/ncbackup.conf
+    dest=/opt/ncscripts/backup/conf/{{ ansible_hostname }}.conf
+    owner=ncbackup
+    group=ncbackup
+    mode=0644
+
+- name: Ensure ncbackup account can execute /usr/bin/azure
+  replace:
+    dest=/etc/sudoers.d/ncbackup
+    regexp='(.*)/usr/bin/find,  /bin/mkdir(.*)$'
+    replace='\g<1>/usr/bin/find, /usr/bin/azure,  /bin/mkdir\g<2>'
+    backup=yes 
+
+# Setup cronjob
+- name: Ensure cron job for backup script
+  cron:
+    name="ncbackup-master"
+    hour="1"
+    minute="0"
+    user="backup"
+    job="TZ='Asia/Shanghai' bash /opt/ncscripts/backup/master_backup_script.sh --run --config /opt/ncscripts/backup/conf/$HOSTNAME.conf"
+    state="present"
+
+- name: Ensure cron job for backup-cleanup script
+  cron:
+    name="backup-cleanup"
+    hour="1"
+    minute="30"
+    user="backup"
+    job="TZ='Asia/Shanghai' bash /opt/ncscripts/backup/clean_local_backup.sh"
+    state="present"
+
+- name: Ensure backup directory is empty 
+  file:
+    path=/opt/backup/lost+found
+    state=absent
+

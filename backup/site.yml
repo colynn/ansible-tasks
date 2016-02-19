@@ -1,0 +1,12 @@
+---
+- hosts: all
+  gather_facts: yes
+  sudo: yes
+  vars:
+    git_ansible_pass: password
+
+  tasks:
+  - include: config_backup.yml
+  - include: setup_azure.yml 
+
+

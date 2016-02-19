@@ -1,0 +1,32 @@
+---
+- name: ensure node.js/npm installl
+  yum:
+    name={{ item }}
+    state=present
+  with_items:
+    - nodejs
+    - npm
+
+- name: ensure azure-cli install
+  raw: npm install -g azure-cli
+
+- name: copy publish.settting file
+  copy:
+    src=files/publish.settings
+    dest=/tmp/publish.settings
+  
+
+- name: azure-cli import account settings
+  raw: azure account import /tmp/publish.settings
+
+- name: delete publish file
+  file:
+    path=/tmp/publish.settings
+    state=absent
+
+- name: azure-accesskey-file
+  template:
+    src=templates/azure_variable.j2
+    dest=/etc/.azure_variable
+ 
+
