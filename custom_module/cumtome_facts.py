@@ -1,5 +1,14 @@
 #!/usr/bin/python
 
+#
+# How to use this module
+# - name: gather site specific packages fact data
+#  site_facts: 
+#    package={{ item }}
+#  with_items:
+#    - zabbix_agent
+#    - rsyslog
+#
 import os
 import commands
 import platform
