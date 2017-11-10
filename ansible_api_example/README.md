@@ -8,9 +8,9 @@
     or 
     using 0_prepare_host_list.py generate inventory host list.
 
-### run batch_installer.py(Interactive input needed information)
+### run example_run.py(Interactive input needed information)
 
-    python batch_installer.py
+    python example_run.py
 
     
     
