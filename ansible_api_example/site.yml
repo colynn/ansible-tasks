@@ -1,0 +1,25 @@
+---
+- hosts: all
+  serial: 1
+  gather_facts: false
+  tasks:
+
+    - fail: msg="Did not defined api token"
+      when: not api_token
+
+    # create mysql etc file.
+    - name: prepare the auth file(mysql)
+      template: src=client.my.cnf.j2 dest=/tmp/.ansible_my_cnf
+      when: Mysql_password|bool
+
+    - name: prepare the auth file(redis)
+      template: src=redis.cnf.j2 dest:=/tmp/.ansible_redis_cnf
+      when: Redis_auth_password|bool
+
+    - name: Ensure auth file deleted
+      file: path=/tmp/.ansible_my_cnf state=absent
+      ignore_errors: yes
+
+    - file: path=/tmp/.ansible_redis_cnf state=absent
+      ignore_errors: yes
+
